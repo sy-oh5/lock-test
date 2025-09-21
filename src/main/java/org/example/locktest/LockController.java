@@ -16,12 +16,13 @@ public class LockController {
 
     @GetMapping("/pessimistic-lock/{id}")
     public ResponseEntity<Book> pessimisticLock(@PathVariable Long id) {
+        System.out.println("now : " + LocalDateTime.now());
+
         return ResponseEntity.ok(lockService.pessimisticLock(id));
     }
 
     @PostMapping("/create")
     public ResponseEntity<Book> create() {
-        System.out.println("now : " + LocalDateTime.now());
         return ResponseEntity.ok(lockService.create());
     }
 }
