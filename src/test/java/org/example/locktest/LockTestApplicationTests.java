@@ -4,14 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class LockTestApplicationTests {
-
-    @Autowired
-    LockService lockService;
+    RestClient restClient = RestClient.create("http://localhost:8080");
 
     @Autowired
     BookRepository bookRepository;
@@ -27,8 +26,16 @@ class LockTestApplicationTests {
         assertNotNull(bookId);
     }
 
+
+
+
     @Test
-    void pessimisticLock(){
-        lockService.pessimisticLock(bookId);
+    void pessimisticLock() {
+        Boolean response = restClient.get()
+                .uri("/pessimistic-lock")
+                .retrieve()
+                .body(Boolean.class);
+
+
     }
 }
