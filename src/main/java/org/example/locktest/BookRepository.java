@@ -12,5 +12,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select b from Book b where b.id = :id")
-    Optional<Book> findByIdForUpdate(@Param("id") Long id);
+    Optional<Book> findByIdForUpdateAsPessimistic(@Param("id") Long id);
+
+    @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+    @Query("select b from Book b where b.id = :id")
+    Optional<Book> findByIdForUpdateAsOptimistic(@Param("id") Long id);
 }

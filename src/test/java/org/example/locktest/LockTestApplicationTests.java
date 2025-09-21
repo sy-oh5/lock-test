@@ -34,11 +34,20 @@ class LockTestApplicationTests {
 
     @DisplayName("응답시간 2초")
     @Test
-    void pessimisticLock() {
+    void optimisticLock() {
         long start = System.currentTimeMillis();
-        callPessmisticLock();
+
+        CompletableFuture<Book> f1 = CompletableFuture.supplyAsync(this::callOptimisticLock);
+        CompletableFuture<Book> f2 = CompletableFuture.supplyAsync(this::callOptimisticLock);
+
+        try {
+            CompletableFuture.allOf(f1, f2).get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new AssertionError("Concurrent request failed", e);
+        }
+
         long took = System.currentTimeMillis() - start;
-        System.out.println("응답시간 : " + took);
+        System.out.println("동시 2요청 총 응답시간 : " + took);
     }
 
 
@@ -47,8 +56,8 @@ class LockTestApplicationTests {
     void pessimisticLock2() {
         long start = System.currentTimeMillis();
 
-        CompletableFuture<Book> f1 = CompletableFuture.supplyAsync(this::callPessmisticLock);
-        CompletableFuture<Book> f2 = CompletableFuture.supplyAsync(this::callPessmisticLock);
+        CompletableFuture<Book> f1 = CompletableFuture.supplyAsync(this::callPessimisticLock);
+        CompletableFuture<Book> f2 = CompletableFuture.supplyAsync(this::callPessimisticLock);
 
         try {
             CompletableFuture.allOf(f1, f2).get();
@@ -68,13 +77,17 @@ class LockTestApplicationTests {
         * 첫번째 call 후 3초 기다리고 2번째 call이라 응답시간이 4초가 걸린 fake test case였다.
         * */
         long start = System.currentTimeMillis();
-        callPessmisticLock();
-        callPessmisticLock();
+        callPessimisticLock();
+        callPessimisticLock();
         long took = System.currentTimeMillis() - start;
         System.out.println("동시 2요청 총 응답시간 : " + took);
     }
 
-    private Book callPessmisticLock(){
+    private Book callPessimisticLock(){
         return restClient.get().uri("/pessimistic-lock/" + bookId).retrieve().body(Book.class);
+    }
+
+    private Book callOptimisticLock(){
+        return restClient.get().uri("/optimistic-lock/" + bookId).retrieve().body(Book.class);
     }
 }

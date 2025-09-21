@@ -21,6 +21,13 @@ public class LockController {
         return ResponseEntity.ok(lockService.pessimisticLock(id));
     }
 
+    @GetMapping("/optimistic-lock/{id}")
+    public ResponseEntity<Book> optimisticLock(@PathVariable Long id) {
+        System.out.println("now : " + LocalDateTime.now());
+
+        return ResponseEntity.ok(lockService.optimisticLock(id));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<Book> create() {
         return ResponseEntity.ok(lockService.create());
