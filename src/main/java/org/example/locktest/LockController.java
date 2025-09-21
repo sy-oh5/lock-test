@@ -3,6 +3,7 @@ package org.example.locktest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -10,9 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LockController {
     private final LockService lockService;
 
-    @GetMapping("/pessimistic-lock")
-    public ResponseEntity<Boolean> pessimisticLock(Long id) {
-        lockService.pessimisticLock(id);
-        return ResponseEntity.ok(true);
+    @GetMapping("/pessimistic-lock/{id}")
+    public ResponseEntity<Book> pessimisticLock(@PathVariable Long id) {
+        return ResponseEntity.ok(lockService.pessimisticLock(id));
     }
 }

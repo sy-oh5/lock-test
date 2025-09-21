@@ -1,6 +1,7 @@
 package org.example.locktest;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,21 +22,33 @@ class LockTestApplicationTests {
     void setUp() {
         // 1) 테스트용 데이터 초기화
         bookRepository.deleteAll();
-        Book saved = bookRepository.save(new Book("JPA", 10));
+        Book saved = bookRepository.save(Book.create("title"));
         bookId = saved.getId();
         assertNotNull(bookId);
     }
 
 
-
-
+    @DisplayName("응답시간 3초")
     @Test
     void pessimisticLock() {
-        Boolean response = restClient.get()
-                .uri("/pessimistic-lock")
-                .retrieve()
-                .body(Boolean.class);
+        long start = System.currentTimeMillis();
+        callPessmisticLock();
+        System.out.println("응답시간 : " + (System.currentTimeMillis() - start));
+    }
 
 
+    @DisplayName("응답시간 6초")
+    @Test
+    void pessimisticLock2() {
+        long start = System.currentTimeMillis();
+        callPessmisticLock();
+        callPessmisticLock();
+        System.out.println("응답시간 : " + (System.currentTimeMillis() - start));
+    }
+
+    private Book callPessmisticLock(){
+        Book book = bookRepository.findByIdForUpdate(bookId).orElseThrow();
+        System.out.println("book id = " + book.getId());
+        return book;
     }
 }
