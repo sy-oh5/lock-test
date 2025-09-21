@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -14,5 +15,10 @@ public class LockController {
     @GetMapping("/pessimistic-lock/{id}")
     public ResponseEntity<Book> pessimisticLock(@PathVariable Long id) {
         return ResponseEntity.ok(lockService.pessimisticLock(id));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Book> create() {
+        return ResponseEntity.ok(lockService.create());
     }
 }

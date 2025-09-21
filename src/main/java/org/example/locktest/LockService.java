@@ -22,4 +22,9 @@ public class LockService {
         }
         return book;
     }
+
+    @Transactional
+    public Book create() {
+        return bookRepository.save(Book.create("title"));
+    }
 }

@@ -13,16 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class LockTestApplicationTests {
     RestClient restClient = RestClient.create("http://localhost:8080");
 
-    @Autowired
-    BookRepository bookRepository;
-
     Long bookId;
 
     @BeforeEach
     void setUp() {
         // 1) 테스트용 데이터 초기화
-        bookRepository.deleteAll();
-        Book saved = bookRepository.save(Book.create("title"));
+        Book saved = restClient.post().uri("/create").retrieve().body(Book.class);
         bookId = saved.getId();
         assertNotNull(bookId);
     }
