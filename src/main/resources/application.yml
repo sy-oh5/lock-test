@@ -2,7 +2,7 @@ spring:
   application:
     name: lock-test
   datasource:
-    url: jdbc:h2:mem:locktest;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:locktest;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=5000
     driver-class-name: org.h2.Driver
     username: sa
     password: 
@@ -15,7 +15,6 @@ spring:
         format_sql: true
         jdbc:
           time_zone: UTC
-          lock_timeout: 1000
     database-platform: org.hibernate.dialect.H2Dialect
   h2:
     console:

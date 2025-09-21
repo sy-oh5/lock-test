@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @RestController
 public class LockController {
@@ -19,6 +21,7 @@ public class LockController {
 
     @PostMapping("/create")
     public ResponseEntity<Book> create() {
+        System.out.println("now : " + LocalDateTime.now());
         return ResponseEntity.ok(lockService.create());
     }
 }
