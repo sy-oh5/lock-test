@@ -26,9 +26,7 @@ public class LockService {
 
     @Transactional
     public Book optimisticLock(Long id) {
-        Book book = bookRepository.findByIdForUpdateAsOptimistic(id).orElseThrow(
-                () -> new RuntimeException("Book not found")
-        );
+        Book book = bookRepository.findByIdForUpdateAsOptimistic(id).orElseThrow();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {

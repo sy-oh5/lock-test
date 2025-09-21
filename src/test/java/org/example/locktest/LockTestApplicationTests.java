@@ -32,10 +32,9 @@ class LockTestApplicationTests {
     }
 
 
-    @DisplayName("응답시간 2초")
+    @DisplayName("동시요청시 에러를 뱉음")
     @Test
     void optimisticLock() {
-        long start = System.currentTimeMillis();
 
         CompletableFuture<Book> f1 = CompletableFuture.supplyAsync(this::callOptimisticLock);
         CompletableFuture<Book> f2 = CompletableFuture.supplyAsync(this::callOptimisticLock);
@@ -45,9 +44,6 @@ class LockTestApplicationTests {
         } catch (ExecutionException | InterruptedException e) {
             throw new AssertionError("Concurrent request failed", e);
         }
-
-        long took = System.currentTimeMillis() - start;
-        System.out.println("동시 2요청 총 응답시간 : " + took);
     }
 
 
