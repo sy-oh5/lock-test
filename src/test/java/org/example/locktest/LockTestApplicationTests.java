@@ -42,19 +42,17 @@ class LockTestApplicationTests {
     }
 
 
-    @DisplayName("동시 2요청: 응답시간 4초")
+    @DisplayName("동시 2요청: 응답시간 4초 - Lock wait")
     @Test
-    void pessimisticLock2() throws Exception {
-        // step 1) 두 개의 동시 요청을 만들어 각 3초 슬립을 포함한 비관적 락 엔드포인트를 호출
+    void pessimisticLock2() {
         long start = System.currentTimeMillis();
 
         CompletableFuture<Book> f1 = CompletableFuture.supplyAsync(this::callPessmisticLock);
         CompletableFuture<Book> f2 = CompletableFuture.supplyAsync(this::callPessmisticLock);
 
-        // step 2) 두 요청이 모두 완료될 때까지 대기
         try {
             CompletableFuture.allOf(f1, f2).get();
-        } catch (ExecutionException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new AssertionError("Concurrent request failed", e);
         }
 
@@ -62,9 +60,13 @@ class LockTestApplicationTests {
         System.out.println("동시 2요청 총 응답시간 : " + took);
     }
 
-    @DisplayName("동시 2요청: 응답시간 4초 - fake")
+    @DisplayName("동시 2요청: 응답시간 4초 - I/O wait")
     @Test
-    void pessimisticLock3() throws Exception {
+    void pessimisticLock3() {
+        /*
+        * 언뜻 보기엔 위 방식과 동일한 응답시간을 가져 같은 테스트처럼 보일 수 있으나
+        * 첫번째 call 후 3초 기다리고 2번째 call이라 응답시간이 4초가 걸린 fake test case였다.
+        * */
         long start = System.currentTimeMillis();
         callPessmisticLock();
         callPessmisticLock();
@@ -73,8 +75,6 @@ class LockTestApplicationTests {
     }
 
     private Book callPessmisticLock(){
-        Book book = restClient.get().uri("/pessimistic-lock/" + bookId).retrieve().body(Book.class);
-        System.out.println("book id = " + book.getId());
-        return book;
+        return restClient.get().uri("/pessimistic-lock/" + bookId).retrieve().body(Book.class);
     }
 }
