@@ -47,7 +47,7 @@ class LockTestApplicationTests {
     }
 
     private Book callPessmisticLock(){
-        Book book = bookRepository.findByIdForUpdate(bookId).orElseThrow();
+        Book book = restClient.get().uri("/pessimistic-lock/" + bookId).retrieve().body(Book.class);
         System.out.println("book id = " + book.getId());
         return book;
     }
