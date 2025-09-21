@@ -1,4 +1,4 @@
-package org.example.locktest.book;
+package org.example.locktest;
 
 import jakarta.persistence.*;
 

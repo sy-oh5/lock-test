@@ -1,4 +1,4 @@
-package org.example.locktest.book;
+package org.example.locktest;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
