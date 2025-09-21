@@ -29,27 +29,32 @@ public class LockController {
 
     // ===== 데드락 시나리오 트리거용 REST 엔드포인트 =====
     @GetMapping("/deadlock/pessimistic/ab")
-    public ResponseEntity<String> deadlockPessimisticAB(@RequestParam Long bookId, @RequestParam Long authorId) {
+    public ResponseEntity<Boolean> deadlockPessimisticAB(@RequestParam Long bookId, @RequestParam Long authorId) {
         return ResponseEntity.ok(lockService.pessimisticDeadlockAB(bookId, authorId));
     }
 
     @GetMapping("/deadlock/pessimistic/ba")
-    public ResponseEntity<String> deadlockPessimisticBA(@RequestParam Long bookId, @RequestParam Long authorId) {
+    public ResponseEntity<Boolean> deadlockPessimisticBA(@RequestParam Long bookId, @RequestParam Long authorId) {
         return ResponseEntity.ok(lockService.pessimisticDeadlockBA(bookId, authorId));
     }
 
     @GetMapping("/deadlock/optimistic/ab")
-    public ResponseEntity<String> deadlockOptimisticAB(@RequestParam Long bookId, @RequestParam Long authorId) {
+    public ResponseEntity<Boolean> deadlockOptimisticAB(@RequestParam Long bookId, @RequestParam Long authorId) {
         return ResponseEntity.ok(lockService.optimisticDeadlockAB(bookId, authorId));
     }
 
     @GetMapping("/deadlock/optimistic/ba")
-    public ResponseEntity<String> deadlockOptimisticBA(@RequestParam Long bookId, @RequestParam Long authorId) {
+    public ResponseEntity<Boolean> deadlockOptimisticBA(@RequestParam Long bookId, @RequestParam Long authorId) {
         return ResponseEntity.ok(lockService.optimisticDeadlockBA(bookId, authorId));
     }
 
     @PostMapping("/create")
     public ResponseEntity<Book> create() {
         return ResponseEntity.ok(lockService.create());
+    }
+
+    @PostMapping("/create-author")
+    public ResponseEntity<Author> createAuthor() {
+        return ResponseEntity.ok(lockService.createAuthor());
     }
 }

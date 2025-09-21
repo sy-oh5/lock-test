@@ -33,6 +33,12 @@ public class LockService {
         return bookRepository.save(Book.create("title"));
     }
 
+    // Author 생성 (테스트용)
+    @Transactional
+    public Author createAuthor() {
+        return authorRepository.save(Author.create("author"));
+    }
+
     // =========================
     // 데드락 시나리오 (비관적 락)
     // 두 트랜잭션이 서로 잠금 순서를 반대로 잡으면 교착 상태를 유발할 수 있습니다.
@@ -43,7 +49,7 @@ public class LockService {
      * 비관적 락 데드락: Book 먼저 잡고(SELECT FOR UPDATE) 잠시 대기 후 Author 잠금 시도
      */
     @Transactional
-    public String pessimisticDeadlockAB(Long bookId, Long authorId) {
+    public boolean pessimisticDeadlockAB(Long bookId, Long authorId) {
         // step1) Book 행을 비관적 락으로 선점
         bookRepository.findByIdForUpdateAsPessimistic(bookId).orElseThrow();
         // step2) 잠시 대기하여 반대편 트랜잭션이 Author를 먼저 잡을 시간을 줌
@@ -52,14 +58,14 @@ public class LockService {
         authorRepository.findByIdForUpdateAsPessimistic(authorId).orElseThrow();
         // step4) 실험 가시성을 위해 약간 더 유지
         sleep(1500);
-        return "OK";
+        return true;
     }
 
     /**
      * 비관적 락 데드락: Author 먼저 → Book
      */
     @Transactional
-    public String pessimisticDeadlockBA(Long bookId, Long authorId) {
+    public boolean pessimisticDeadlockBA(Long bookId, Long authorId) {
         // step1) Author 행을 비관적 락으로 선점
         authorRepository.findByIdForUpdateAsPessimistic(authorId).orElseThrow();
         // step2) 잠시 대기하여 반대편이 Book을 먼저 잡게 함
@@ -68,7 +74,7 @@ public class LockService {
         bookRepository.findByIdForUpdateAsPessimistic(bookId).orElseThrow();
         // step4) 약간 유지
         sleep(1500);
-        return "OK";
+        return true;
     }
 
     // =========================
@@ -81,7 +87,7 @@ public class LockService {
      * 낙관적 락 충돌 시나리오: Book → Author 순서로 OPTIMISTIC_FORCE_INCREMENT 후 대기
      */
     @Transactional
-    public String optimisticDeadlockAB(Long bookId, Long authorId) {
+    public boolean optimisticDeadlockAB(Long bookId, Long authorId) {
         // step1) Book을 낙관적(버전 강제 증가) 모드로 로드
         bookRepository.findByIdForUpdateAsOptimistic(bookId).orElseThrow();
         // step2) 반대편 트랜잭션이 Author를 먼저 로드하도록 짧게 대기
@@ -90,14 +96,14 @@ public class LockService {
         authorRepository.findByIdForUpdateAsOptimistic(authorId).orElseThrow();
         // step4) 커밋 시점에 두 트랜잭션 모두 버전 증가를 시도 → 한쪽 이상에서 버전 충돌 예외
         sleep(1500);
-        return "OK";
+        return true;
     }
 
     /**
      * 낙관적 락 충돌 시나리오: Author → Book 순서
      */
     @Transactional
-    public String optimisticDeadlockBA(Long bookId, Long authorId) {
+    public boolean optimisticDeadlockBA(Long bookId, Long authorId) {
         // step1) Author를 낙관적(버전 강제 증가) 모드로 로드
         authorRepository.findByIdForUpdateAsOptimistic(authorId).orElseThrow();
         // step2) 반대편이 Book을 먼저 로드하도록 대기
@@ -106,7 +112,7 @@ public class LockService {
         bookRepository.findByIdForUpdateAsOptimistic(bookId).orElseThrow();
         // step4) 커밋 시 양쪽에서 버전 증가 충돌 가능
         sleep(1500);
-        return "OK";
+        return true;
     }
 
     // 공통 슬립 유틸 (인터럽트 플래그 복원)
