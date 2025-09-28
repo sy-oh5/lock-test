@@ -76,7 +76,7 @@ class LockTestApplicationTests {
     void pessimisticLock3() {
         /*
         * 언뜻 보기엔 위 방식과 동일한 응답시간을 가져 같은 테스트처럼 보일 수 있으나
-        * 첫번째 call 후 3초 기다리고 2번째 call이라 응답시간이 4초가 걸린 fake test case였다.
+        * 첫번째 call 후 2초 기다리고 2번째 call이라 응답시간이 4초가 걸린 fake test case였다.
         * */
         long start = System.currentTimeMillis();
         callPessimisticLock();
