@@ -53,7 +53,7 @@ class LockTestApplicationTests {
     }
 
 
-    @DisplayName("동시 2요청: 응답시간 4초 - Lock wait")
+    @DisplayName("동시 2요청: 응답시간 2초 - Lock wait")
     @Test
     void pessimisticLock2() {
         long start = System.currentTimeMillis();
